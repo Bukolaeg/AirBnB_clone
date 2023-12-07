@@ -50,9 +50,9 @@ class FileStorage:
         exists, otherwise raise an exceltion that does nothing but return.
         """
         try:
-            with open(FileStorage__file_path, "r", encoding="utf-8") as file:
-                jason_file = json.load(file)
+            with open(FileStorage.__file_path, "r", encoding="utf-8") as file:
+                json_file = json.load(file)
             for k, v in json_file.items():
                 FileStorage.__objects[k] = BaseModel(**v)
         except:
-            return
+            pass
