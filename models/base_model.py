@@ -4,6 +4,7 @@ Created on: Dec. 06, 2023
 Authors: Bukola Egberongbe
          Jamiu Olukayode Shomoye
 """
+import models
 from datetime import datetime as dt
 import uuid
 
@@ -47,6 +48,7 @@ class BaseModel:
         with the current datetime.
         """
         self.updated_at = dt.now()
+        models.storage.save()
 
     def to_dict(self):
         """
