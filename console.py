@@ -13,12 +13,18 @@ import re
 
 
 class HBNBCommand(cmd.Cmd):
-    """ Class for the console """
+    """ An entry point of the HBNBCommand command
+    interpreter.                           """
 
     prompt = "(hbnb) "
 
     def default(self, line):
-        """Handle class.cmd(args) commands """
+        """default - called when the inputted command starts
+        with a class name.
+
+        args:
+            line (str): The inputted line string
+        """
         if not re.search(r"\.(\w+)\(", line):
             return
         cl_name = line.split(".")[0]
@@ -79,7 +85,11 @@ class HBNBCommand(cmd.Cmd):
             super().default(line)
 
     def do_update(self, line):
-        """Update an instance based on class name and id.\n"""
+        """do_update - Updates an instance based on the class name and id
+        by adding or updating attribute (save the change into the JSON file).
+        args:
+            line (str): the input string
+        """
         if line == "" or line is None:
             print("** class name missing **")
             return
@@ -123,7 +133,12 @@ class HBNBCommand(cmd.Cmd):
                     print(storage.all()[key])
 
     def do_destroy(self, line):
-        """Deletes an instance based on the class name and id.\n"""
+        """Destroy command that deletes an instance based on the class name
+        and id. Save the change in JSON file.
+
+        args:
+            line (str): inputted line in command prompt.
+        """
         if line == "" or line is None:
             print("** class name missing **")
         else:
@@ -141,7 +156,10 @@ class HBNBCommand(cmd.Cmd):
                     storage.save()
 
     def do_all(self, line):
-        """Displays all instances, display all of a class of instances.\n"""
+        """
+        Prints all string representation of all instances based
+        or not on the class name.
+        """
         if line != "":
             terms = line.split(' ')
             if terms[0] not in storage.classes():
@@ -155,7 +173,12 @@ class HBNBCommand(cmd.Cmd):
             print(obj_list)
 
     def do_create(self, line):
-        """Creates a new instance.\n"""
+        """do_create - Create command to create a new instance
+        of BaseModel, save it in a JSON file and prints the id.
+
+        args:
+            line (str): inputted line in command prompt.
+        """
         if line == "" or line is None:
             print("** class name missing **")
         elif line not in storage.classes():
@@ -166,16 +189,19 @@ class HBNBCommand(cmd.Cmd):
             print(inst.id)
 
     def do_EOF(self, line):
-        """End-of-file input exits console.\n"""
+        """EOF command to exit the program.
+        """
         pass
         return True
 
     def do_quit(self, line):
-        """Quit command to exit the program\n"""
+        """ Quit command to exit the program.
+        """
         return True
 
     def emptyline(self):
-        """Prints an empty line.\n"""
+        """method to do nothing when an empty line is inputed.
+        """
         pass
 
 
