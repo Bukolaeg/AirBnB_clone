@@ -85,11 +85,7 @@ class HBNBCommand(cmd.Cmd):
             super().default(line)
 
     def do_update(self, line):
-        """do_update - Updates an instance based on the class name and id
-        by adding or updating attribute (save the change into the JSON file).
-        args:
-            line (str): the input string
-        """
+        """Update an instance based on class name and id.\n"""
         if line == "" or line is None:
             print("** class name missing **")
             return
@@ -133,12 +129,7 @@ class HBNBCommand(cmd.Cmd):
                     print(storage.all()[key])
 
     def do_destroy(self, line):
-        """Destroy command that deletes an instance based on the class name
-        and id. Save the change in JSON file.
-
-        args:
-            line (str): inputted line in command prompt.
-        """
+        """Deletes an instance based on the class name and id.\n"""
         if line == "" or line is None:
             print("** class name missing **")
         else:
@@ -156,10 +147,7 @@ class HBNBCommand(cmd.Cmd):
                     storage.save()
 
     def do_all(self, line):
-        """
-        Prints all string representation of all instances based
-        or not on the class name.
-        """
+        """Displays all instances, display all of a class of instances.\n"""
         if line != "":
             terms = line.split(' ')
             if terms[0] not in storage.classes():
@@ -173,12 +161,7 @@ class HBNBCommand(cmd.Cmd):
             print(obj_list)
 
     def do_create(self, line):
-        """do_create - Create command to create a new instance
-        of BaseModel, save it in a JSON file and prints the id.
-
-        args:
-            line (str): inputted line in command prompt.
-        """
+        """Creates a new instance.\n"""
         if line == "" or line is None:
             print("** class name missing **")
         elif line not in storage.classes():
@@ -189,14 +172,12 @@ class HBNBCommand(cmd.Cmd):
             print(inst.id)
 
     def do_EOF(self, line):
-        """EOF command to exit the program.
-        """
+        """EOF command to exit the program."""
         pass
         return True
 
     def do_quit(self, line):
-        """ Quit command to exit the program.
-        """
+        """Quit command to exit the program."""
         return True
 
     def emptyline(self):
