@@ -82,13 +82,13 @@ $
 ---
 ## Installation
 
-* Clone the repository. git clone https://github.com/mecomonteshbtn/AirBnB_clone.git
+* Clone the repository. git clone https://github.com/Bukolaeg/AirBnB_clone
 * Open the /AirBnB_clone directory and execute console.py
 
 ### Setup
 
 * You need Python interpreter.
-IMPORTANT: The project was created in UBUNTU 14.04.3 LTS and Python 3.4.3.
+IMPORTANT: The project was created in Ubuntu 20.04 LTS using python3 (version 3.8.5)
 
 ---
 
