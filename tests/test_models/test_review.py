@@ -48,5 +48,6 @@ class TestReview(unittest.TestCase):
         self.assertTrue(rat.user_id == "")
         self.assertTrue(rat.text == "")
 
+
 if __name__ == "__main__":
     unittest.main()

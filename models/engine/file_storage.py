@@ -72,7 +72,7 @@ class FileStorage:
             with open(FileStorage.__file_path, "r", encoding="utf-8") as file:
                 json_file = json.load(file)
             json_file = {k: self.classes()[v["__class__"]](**v) for k, v in
-                        json_file.items()}
+                         json_file.items()}
             FileStorage.__objects = json_file
         except:
             pass

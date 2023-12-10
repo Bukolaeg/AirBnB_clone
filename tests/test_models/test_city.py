@@ -47,5 +47,6 @@ class TestCity(unittest.TestCase):
         self.assertTrue(rat.state_id == "")
         self.assertTrue(rat.name == "")
 
+
 if __name__ == "__main__":
     unittest.main()

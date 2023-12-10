@@ -56,5 +56,6 @@ class TestPlace(unittest.TestCase):
         self.assertTrue(rat.longitude == 0.0)
         self.assertTrue(rat.amenity_ids == [])
 
+
 if __name__ == "__main__":
     unittest.main()

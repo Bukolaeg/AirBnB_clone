@@ -49,5 +49,6 @@ class TestUser(unittest.TestCase):
         self.assertTrue(rat.first_name == "")
         self.assertTrue(rat.last_name == "")
 
+
 if __name__ == "__main__":
     unittest.main()

@@ -46,5 +46,6 @@ class TestAmenity(unittest.TestCase):
         rat = Amenity()
         self.assertTrue(rat.name == "")
 
+
 if __name__ == "__main__":
     unittest.main()

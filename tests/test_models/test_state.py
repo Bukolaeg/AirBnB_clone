@@ -46,5 +46,6 @@ class TestState(unittest.TestCase):
         rat = State()
         self.assertTrue(rat.name == "")
 
+
 if __name__ == "__main__":
     unittest.main()
