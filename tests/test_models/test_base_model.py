@@ -1,147 +1,116 @@
 #!/usr/bin/python3
+"""unit tests module for our BaseModel Class"""
 
-"""
-    All the test for the base_model are implemented here.
-"""
-
-import unittest
+from models import storage
 from models.base_model import BaseModel
-from io import StringIO
-import sys
-import datetime
+from models.engine.file_storage import FileStorage
+from datetime import datetime
+import uuid
+import unittest
+import json
+import time
+import os
+import re
 
 
-class TestBase(unittest.TestCase):
-    """
-        Testing the base class model.
-    """
+class TestBaseModel(unittest.TestCase):
+
+    """tests for the BaseModel class"""
 
     def setUp(self):
-        """
-            Initializing instance.
-        """
-        self.my_model = BaseModel()
-        self.my_model.name = "Binita Rai"
+        """to set it up"""
+        pass
 
-    def TearDown(self):
-        """
-            Removing instance.
-        """
-        del self.my_model
+    def tearDown(self):
+        """to tear it all down"""
+        self.resetStorage()
+        pass
 
-    def test_id_type(self):
-        """
-            Checks that the type of the id is string.
-        """
-        self.assertEqual("<class 'str'>", str(type(self.my_model.id)))
+    def resetStorage(self):
+        """start fresh with storage"""
+        FileStorage._Filestorage__objects = {}
+        if os.path.isfile(FileStorage._FileStorage__file_path):
+            os.remove(FileStorage._FileStorage__file_path)
 
-    def test_ids_differ(self):
-        """
-            Checks that the ids between two instances are different.
-        """
-        new_model = BaseModel()
-        self.assertNotEqual(new_model.id, self.my_model.id)
+    """Tests for instantiation"""
+    def test_instance(self):
+        """making a lab rat"""
 
-    def test_name(self):
-        """
-            Checks that an attribute can be added.
-        """
-        self.assertEqual("Binita Rai", self.my_model.name)
+        rat = BaseModel()
+        string = "<class 'models.base_model.BaseModel'>"
+        self.assertEqual(str(type(rat)), string)
+        self.assertIsInstance(rat, BaseModel)
+        self.assertTrue(issubclass(type(rat), BaseModel))
 
-    def test_a_updated_created_equal(self):
-        """
-            Checks that both dates are equal.
-        """
-        self.assertEqual(self.my_model.updated_at.year,
-                         self.my_model.created_at.year)
+    def test_init_no_args(self):
+        """init no args please"""
+        with self.assertRaises(TypeError) as e:
+            BaseModel.__init__()
+        msg = "BaseModel.__init__() missing 1 required
+        positional argument: 'self'"
+        self.assertEqual(str(e.exception), msg)
+
+    def test_datetime_creation(self):
+        """checking for datetime function"""
+        rat = BaseModel()
+        date = datetime.now()
+        difference = rat.updated_at - rat.created_at
+        self.assertTrue(abs(difference.total_seconds()) < 0.01)
+        difference = rat.created_at - date
+        self.assertTrue(abs(difference.total_seconds()) < 0.1)
+
+    def test_ids_special(self):
+        """test for unique ids"""
+        rat = [BaseModel().id for i in range(1000)]
+        self.assertEqual(len(set(rat)), len(rat))
 
     def test_save(self):
-        """
-            Checks that after updating the instance; the dates differ in the
-            updated_at attribute.
-        """
-        old_update = self.my_model.updated_at
-        self.my_model.save()
-        self.assertNotEqual(self.my_model.updated_at, old_update)
+        """save yourselves!"""
+        rat = BaseModel()
+        time.sleep(0.5)
+        date = datetime.now()
+        rat.save()
+        self.assertTrue(abs(rat.updated_at > rat.created_at))
 
-    def test_str_overide(self):
-        """
-            Checks that the right message gets printed.
-        """
-        backup = sys.stdout
-        inst_id = self.my_model.id
-        capture_out = StringIO()
-        sys.stdout = capture_out
-        print(self.my_model)
+    def test_save_time(self):
+        """save updates time"""
+        rat = BaseModel()
+        the_time = rat.updated_at
+        time.sleep(0.001)
+        rat.save()
 
-        cap = capture_out.getvalue().split(" ")
-        self.assertEqual(cap[0], "[BaseModel]")
+        self.assertNotEqual(the_time, rat.updated_at)
 
-        self.assertEqual(cap[1], "({})".format(inst_id))
-        sys.stdout = backup
+        with open("file.json", "r") as f:
+            self.assertIn(rat.to_dict(), json.loads(f.read()).values())
 
-    def test_to_dict_type(self):
-        """
-            Checks that the to_dict method return type.
-        """
+    def test_str_method(self):
+        """test the str method"""
+        rat = BaseModel()
+        ratstr = "[{}] ({}) {}".format("BaseModel",
+                                       rat.id, rat.__dict__)
+        self.assertEqual(rat.__str__(), ratstr)
 
-        self.assertEqual("<class 'dict'>",
-                         str(type(self.my_model.to_dict())))
+    def test_attr(self):
+        """do they exist, right data types?"""
+        rat = BaseModel()
+        self.assertTrue(isinstance(rat.id, str))
+        self.assertTrue(isinstance(rat.created_at, datetime))
+        self.assertTrue(isinstance(rat.updated_at, datetime))
 
-    def test_to_dict_class(self):
-        """
-            Checks that the __class__ key exists.
-        """
+    def test_to_dict(self):
+        """send to dict"""
+        rat = BaseModel()
+        rat.name = "labrat"
+        rat.age = 100
+        thing = rat.to_dict()
+        self.assertEqual(thing["id"], rat.id)
+        self.assertEqual(thing["__class__"], type(rat).__name__)
+        self.assertEqual(thing["created_at"], rat.created_at.isoformat())
+        self.assertEqual(thing["updated_at"], rat.updated_at.isoformat())
+        self.assertEqual(thing["name"], rat.name)
+        self.assertEqual(thing["age"], rat.age)
 
-        self.assertEqual("BaseModel", (self.my_model.to_dict())["__class__"])
 
-    def test_to_dict_type_updated_at(self):
-        """
-            Checks the type of the value of updated_at.
-        """
-        self.assertEqual("<class 'str'>",
-                         str(type((self.my_model.to_dict())["updated_at"])))
-
-    def test_to_dict_type_created_at(self):
-        """
-            Checks the type of the value of created_at.
-        """
-        tmp = self.my_model.to_dict()
-        self.assertEqual("<class 'str'>", str(type(tmp["created_at"])))
-
-    def test_kwargs_instantiation(self):
-        """
-            Test that an instance is created using the
-            key value pair.
-        """
-        my_model_dict = self.my_model.to_dict()
-        new_model = BaseModel(**my_model_dict)
-        self.assertEqual(new_model.id, self.my_model.id)
-
-    def test_type_created_at(self):
-        """
-            Test that the new_model's updated_at
-            data type is datetime.
-        """
-        my_model_dict = self.my_model.to_dict()
-        new_model = BaseModel(my_model_dict)
-        self.assertTrue(isinstance(new_model.created_at, datetime.datetime))
-
-    def test_type_updated_at(self):
-        """
-            Test that the new_model's created_at
-            data type is datetime.
-        """
-        my_model_dict = self.my_model.to_dict()
-        new_model = BaseModel(my_model_dict)
-        self.assertTrue(isinstance(new_model.updated_at, datetime.datetime))
-
-    def test_compare_dict(self):
-        """
-            Test that the new_model's and my_model's
-            dictionary values are same.
-        """
-        my_model_dict = self.my_model.to_dict()
-        new_model = BaseModel(**my_model_dict)
-        new_model_dict = new_model.to_dict()
-        self.assertEqual(my_model_dict, new_model_dict)
+if __name__ == '__main__':
+    unittest.main()

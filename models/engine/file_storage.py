@@ -4,7 +4,7 @@ Created on: Dec. 06, 2023
 Authors: Bukola Egberongbe
          Jamiu Olukayode Shomoye
 """
-from models.base_model import BaseModel
+from datetime import datetime
 import json
 
 
@@ -44,15 +44,35 @@ class FileStorage:
         with open(FileStorage.__file_path, "w", encoding="utf-8") as file:
             json.dump(file_dict, file)
 
+    def classes(self):
+        """ Returns a dict of all valid classes """
+        from models.base_model import BaseModel
+        from models.state import State
+        from models.city import City
+        from models.place import Place
+        from models.review import Review
+        from models.amenity import Amenity
+        from models.user import User
+
+        classes = {"BaseModel": BaseModel,
+                   "State": State,
+                   "City": City,
+                   "Amenity": Amenity,
+                   "Place": Place,
+                   "Review": Review,
+                   "User": User}
+        return classes
+
     def reload(self):
         """
         reload - deserializes a JSON file to __objects only if the JASON file
         exists, otherwise raise an exceltion that does nothing but return.
         """
         try:
-            with open(FileStorage__file_path, "r", encoding="utf-8") as file:
-                jason_file = json.load(file)
-            for k, v in json_file.items():
-                FileStorage.__objects[k] = BaseModel(**v)
+            with open(FileStorage.__file_path, "r", encoding="utf-8") as file:
+                json_file = json.load(file)
+            json_file = {k: self.classes()[v["__class__"]](**v) for k, v in
+                         json_file.items()}
+            FileStorage.__objects = json_file
         except:
-            return
+            pass
